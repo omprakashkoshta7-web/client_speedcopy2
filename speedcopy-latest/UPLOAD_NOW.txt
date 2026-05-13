@@ -1,0 +1,37 @@
+╔════════════════════════════════════════════════════════════╗
+║     UPLOAD CLIENT TO SNEHA'S GITHUB REPOSITORY            ║
+╚════════════════════════════════════════════════════════════╝
+
+🎯 REPOSITORY:
+   https://github.com/snehakoshta/speedcopy_agu.git
+
+🚀 EASIEST WAY:
+   Double-click: upload-to-sneha-repo.bat
+
+📋 WHAT IT DOES:
+   ✓ Initializes git (if needed)
+   ✓ Sets up remote to Sneha's repo
+   ✓ Uploads files in batches of 80
+   ✓ Avoids GitHub's 100 file limit
+   ✓ Shows progress for each batch
+
+⚡ MANUAL COMMANDS (if batch file doesn't work):
+
+   cd client
+   git init
+   git remote add origin https://github.com/snehakoshta/speedcopy_agu.git
+   git add .
+   git commit -m "Initial commit - SpeedCopy Client"
+   git branch -M main
+   git push -u origin main
+
+⚠️ BEFORE UPLOADING:
+   • Make sure repository exists on GitHub
+   • Ensure you have push access
+   • Check internet connection
+   • Git credentials should be configured
+
+✅ AFTER UPLOAD:
+   Visit: https://github.com/snehakoshta/speedcopy_agu
+
+═══════════════════════════════════════════════════════════

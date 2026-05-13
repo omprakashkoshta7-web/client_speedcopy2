@@ -1,0 +1,70 @@
+const { Router } = require('express');
+const config = require('../config');
+const {
+  authLimiter,
+  otpSendLimiter,
+  otpVerifyLimiter,
+  authMeLimiter,
+} = require('../middlewares/rate-limit');
+const { authenticate } = require('../middlewares/auth');
+const {
+  buildAuthedProxyReqOptDecorator,
+  buildProxyReqBodyDecorator,
+  buildProxyReqOptDecorator,
+  createServiceProxy,
+} = require('../utils/proxy');
+
+const router = Router();
+
+const authProxy = (extraMiddleware) => {
+  const middlewares = extraMiddleware || [];
+  return [
+    ...middlewares,
+    createServiceProxy(config.services.auth, {
+      // Use originalUrl so the full path is preserved (e.g. /api/auth/verify)
+      proxyReqPathResolver: (req) => req.originalUrl,
+      proxyReqBodyDecorator: buildProxyReqBodyDecorator(),
+      proxyReqOptDecorator: middlewares.length
+        ? buildAuthedProxyReqOptDecorator(config.services.auth)
+        : buildProxyReqOptDecorator(config.services.auth),
+    }),
+  ];
+};
+
+// POST /api/auth/verify — public
+router.post('/verify', authLimiter, ...authProxy());
+
+// Public phone OTP routes get their own stricter buckets.
+router.post('/phone/send-otp', otpSendLimiter, ...authProxy());
+router.post('/phone/verify-otp', otpVerifyLimiter, ...authProxy());
+
+// GET /api/auth/me — requires JWT
+router.get('/me', authMeLimiter, ...authProxy([authenticate]));
+
+// PATCH /api/auth/users/:id/role — requires JWT (admin check done in auth-service)
+router.patch('/users/:id/role', ...authProxy([authenticate]));
+
+// PATCH /api/auth/users/:id/status — requires JWT
+router.patch('/users/:id/status', ...authProxy([authenticate]));
+
+// Fallback — catch any other /api/auth/* routes
+router.use('/', ...authProxy());
+
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Gateway Auth
+ *     description: auth gateway routes
+ *
+ * /api/auth:
+ *   get:
+ *     summary: Base auth route
+ *     tags: [Gateway Auth]
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+
+module.exports = router;

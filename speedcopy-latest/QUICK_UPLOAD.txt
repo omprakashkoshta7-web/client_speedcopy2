@@ -1,0 +1,31 @@
+╔════════════════════════════════════════════════════════════╗
+║         CLIENT FOLDER - QUICK UPLOAD TO GITHUB            ║
+╚════════════════════════════════════════════════════════════╝
+
+🚀 FASTEST WAY:
+   Double-click: upload-in-batches.bat
+
+📝 WHAT IT DOES:
+   • Uploads files in batches of 80
+   • Avoids GitHub's 100 file limit
+   • Automatic commit & push
+   • Progress tracking
+
+⚙️ FIRST TIME SETUP:
+   1. Run upload-in-batches.bat
+   2. Enter GitHub repo URL when asked
+   3. Done! Script remembers for next time
+
+🔗 EXAMPLE REPO URL:
+   https://github.com/yourusername/speedcopy-client.git
+
+✅ FEATURES:
+   ✓ Handles 1000+ files easily
+   ✓ Safe delays between uploads
+   ✓ Error handling
+   ✓ Resume support
+
+📖 DETAILED GUIDE:
+   See BATCH_UPLOAD_GUIDE.md
+
+═══════════════════════════════════════════════════════════

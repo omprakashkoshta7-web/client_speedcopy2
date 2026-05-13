@@ -1,0 +1,373 @@
+import React, { useCallback, useState } from 'react';
+import {
+  FlatList,
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from 'react-native';
+import { RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ChevronLeft, Search, ArrowRight } from 'lucide-react-native';
+import { SafeScreen } from '../../components/layout/SafeScreen';
+import { Spacing } from '../../constants/theme';
+import { GiftStackParamList } from '../../navigation/types';
+import { useThemeStore } from '../../store/useThemeStore';
+import * as productsApi from '../../api/products';
+import { dedupeProducts, getProductImageUrl, mergeProductImageCandidates, sortProducts, toAbsoluteAssetUrl } from '../../utils/product';
+import { resolveProductPricing } from '../../utils/pricing';
+
+const IMG_GIFT_PLACEHOLDER = require('../../../assets/images/gift-prod-mug.png');
+
+type Nav = NativeStackNavigationProp<GiftStackParamList, 'GiftShopByCategory'>;
+type Route = RouteProp<GiftStackParamList, 'GiftShopByCategory'>;
+
+type DesignItem = {
+  id: string;
+  name: string;
+  category: string;
+  isPremium: boolean;
+  thumbnail?: string;
+  imageCandidates?: string[];
+  price?: number;
+  originalPrice?: number;
+  discount?: string;
+};
+
+function normalizeCategoryValue(value: any): string {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g, '-');
+}
+
+function extractGiftCategoryKeys(product: any): string[] {
+  const values = [
+    product?.category,
+    product?.category?.slug,
+    product?.category?._id,
+    product?.category?.name,
+    product?.subcategory,
+    product?.subcategory?.slug,
+    product?.subcategory?._id,
+    product?.subcategory?.name,
+  ];
+
+  return Array.from(
+    new Set(
+      values
+        .map((value) => normalizeCategoryValue(value))
+        .filter(Boolean),
+    ),
+  );
+}
+
+function matchesGiftCategory(product: any, rawCategory?: string, matchedCategory?: any): boolean {
+  if (!rawCategory && !matchedCategory) return true;
+
+  const requestedKeys = Array.from(
+    new Set(
+      [
+        rawCategory,
+        matchedCategory?._id,
+        matchedCategory?.slug,
+        matchedCategory?.name,
+      ]
+        .map((value) => normalizeCategoryValue(value))
+        .filter(Boolean),
+    ),
+  );
+
+  if (!requestedKeys.length) return true;
+  const productKeys = extractGiftCategoryKeys(product);
+  return requestedKeys.some((key) => productKeys.includes(key));
+}
+
+function DesignImage({
+  item,
+  placeholderColor,
+}: {
+  item: DesignItem;
+  placeholderColor: string;
+}) {
+  const candidates = React.useMemo(
+    () => (item.imageCandidates?.length ? item.imageCandidates : item.thumbnail ? [toAbsoluteAssetUrl(item.thumbnail)] : []),
+    [item.imageCandidates, item.thumbnail],
+  );
+  const [imageIndex, setImageIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    setImageIndex(0);
+  }, [item.id, item.thumbnail, item.imageCandidates]);
+
+  const activeImage = candidates[imageIndex];
+
+  return (
+    <View style={[styles.designImgPlaceholder, { backgroundColor: placeholderColor }]}>
+      {activeImage ? (
+        <Image
+          source={{ uri: activeImage }}
+          style={styles.designImg}
+          resizeMode="cover"
+          onError={() => setImageIndex((prev) => (prev + 1 < candidates.length ? prev + 1 : candidates.length))}
+        />
+      ) : (
+        <Image source={IMG_GIFT_PLACEHOLDER} style={styles.designImg} resizeMode="cover" />
+      )}
+    </View>
+  );
+}
+
+export function GiftShopByCategoryScreen() {
+  const navigation = useNavigation<Nav>();
+  const route = useRoute<Route>();
+  const { colors: t } = useThemeStore();
+  const routeCategory = route.params?.category;
+  const routeCategoryName = route.params?.categoryName;
+  const [search, setSearch] = useState('');
+  const [designItems, setDesignItems] = useState<DesignItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useFocusEffect(useCallback(() => {
+    setLoading(true);
+    Promise.all([
+      productsApi.getGiftingProducts({ limit: 60 }).catch(() => null),
+      routeCategory ? productsApi.getGiftingProducts({ category: routeCategory, limit: 60 }).catch(() => null) : Promise.resolve(null),
+      productsApi.getGiftingCategories().catch(() => null),
+    ]).then(([allRes, filteredRes, catsRes]) => {
+      const matchedCategory = (catsRes || []).find((item: any) => (
+        item?.slug === routeCategory ||
+        item?._id === routeCategory ||
+        String(item?.name || '').toLowerCase() === String(routeCategory || '').toLowerCase()
+      ));
+      const allRawItems = allRes?.products || allRes?.data || (Array.isArray(allRes) ? allRes : []);
+      const filteredRawItems =
+        filteredRes?.products || filteredRes?.data || (Array.isArray(filteredRes) ? filteredRes : []);
+      const allItems = sortProducts(dedupeProducts(allRawItems));
+      const filteredFromAll = routeCategory
+        ? allItems.filter((item: any) => matchesGiftCategory(item, routeCategory, matchedCategory))
+        : allItems;
+      const items = sortProducts(dedupeProducts(filteredFromAll.length > 0 ? [...filteredFromAll, ...filteredRawItems] : filteredRawItems));
+      const mappedItems = items.map((p: any) => {
+        const productId = String(p?._id || p?.id || '').trim();
+        const listFallback = allItems.find((item: any) => String(item?._id || item?.id || '').trim() === productId) || p;
+        const { price, originalPrice, discountLabel } = resolveProductPricing(p);
+        const imageCandidates = mergeProductImageCandidates(p, listFallback);
+        return {
+          id: p._id || p.id,
+          name: p.name || 'Product',
+          category: typeof p.category === 'object' ? p.category?.name : (p.category || 'All'),
+          isPremium: Boolean(p.isFeatured || p.is_featured),
+          thumbnail: imageCandidates[0] || getProductImageUrl(listFallback) || getProductImageUrl(p),
+          imageCandidates,
+          price,
+          originalPrice,
+          discount: discountLabel,
+        };
+      });
+
+      const mapped = mappedItems.filter((p: DesignItem) => Boolean(p.id));
+      setDesignItems(dedupeProducts(mapped));
+      setLoading(false);
+    }).catch(() => {
+      setDesignItems([]);
+      setLoading(false);
+    });
+  }, [routeCategory, routeCategoryName]));
+
+  const filtered = designItems.filter((d) => !search.trim() || d.name.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <SafeScreen>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.headerSlot} onPress={() => navigation.goBack()} hitSlop={12}>
+          <ChevronLeft size={24} color={t.iconDefault} />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: t.textPrimary }]}>{routeCategoryName || 'Shop by category'}</Text>
+        <View style={styles.headerSlot} />
+      </View>
+
+      {/* Search */}
+      <View style={[styles.searchBar, { borderBottomColor: t.searchBorder }]}>
+        <Search size={18} color={t.placeholder} />
+        <TextInput
+          style={[styles.searchInput, { color: t.textPrimary }]}
+          placeholder="Search"
+          placeholderTextColor={t.placeholder}
+          value={search}
+          onChangeText={setSearch}
+        />
+      </View>
+
+      {/* Design Grid */}
+      {loading ? (
+        <View style={styles.loadingWrap}>
+          <ActivityIndicator size="large" color={t.textPrimary} />
+        </View>
+      ) : (
+        <FlatList
+          data={filtered}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.grid}
+          columnWrapperStyle={styles.gridRow}
+          showsVerticalScrollIndicator={false}
+          initialNumToRender={6}
+          maxToRenderPerBatch={8}
+          windowSize={7}
+          removeClippedSubviews
+          renderItem={({ item }) => (
+            <View style={[styles.designCard, { backgroundColor: t.card, borderColor: t.border }]}>
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={() =>
+                  navigation.navigate('GiftProductDetail', {
+                    productId: item.id,
+                    image: item.thumbnail,
+                    name: item.name,
+                    price: item.price,
+                    originalPrice: item.originalPrice,
+                    discount: item.discount,
+                  })
+                }
+              >
+                <DesignImage item={item} placeholderColor={t.chipBg} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.startDesignBtn, { backgroundColor: t.textPrimary }]}
+                activeOpacity={0.9}
+                onPress={() =>
+                  navigation.navigate('GiftCustomize', {
+                    productId: item.id,
+                    flowType: 'gifting',
+                    image: item.thumbnail,
+                    name: item.name,
+                  })
+                }
+              >
+                <Text style={[styles.startDesignText, { color: t.background }]} numberOfLines={1}>
+                  Start design
+                </Text>
+                <ArrowRight size={14} color={t.background} style={{ flexShrink: 0 }} />
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      )}
+    </SafeScreen>
+  );
+}
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.lg,
+    paddingTop: 6,
+    paddingBottom: 12,
+    minHeight: 52,
+    gap: 12,
+  },
+  headerSlot: {
+    width: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 18,
+    color: '#242424',
+    flex: 1,
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    marginHorizontal: Spacing.lg,
+    paddingHorizontal: 2,
+    minHeight: 44,
+    gap: 10,
+    marginBottom: Spacing.md,
+  },
+  searchInput: {
+    flex: 1,
+    fontFamily: 'Poppins_400Regular',
+    fontSize: 14,
+    color: '#242424',
+    paddingVertical: 0,
+    lineHeight: 20,
+    textAlignVertical: 'center',
+    includeFontPadding: false,
+  },
+  loadingWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 30,
+  },
+  grid: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: 100,
+    paddingTop: Spacing.sm,
+  },
+  gridRow: {
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
+  designCard: {
+    width: '48%',
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    minHeight: 224,
+    ...Platform.select({
+      ios: { shadowColor: '#111827', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.08, shadowRadius: 10 },
+      android: { elevation: 3 },
+    }),
+  },
+  designImg: {
+    width: '100%',
+    height: '100%',
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
+  },
+  designImgPlaceholder: {
+    width: '100%',
+    height: 170,
+    backgroundColor: '#F6F6F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  startDesignBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000000',
+    paddingVertical: 11,
+    paddingHorizontal: 12,
+    gap: 6,
+  },
+  startDesignText: {
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 10.5,
+    color: '#FFFFFF',
+    flexShrink: 1,
+  },
+});
+
+
+
+
+

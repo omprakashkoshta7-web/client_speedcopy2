@@ -1,0 +1,63 @@
+========================================
+PROBLEM: Too many files for manual upload
+========================================
+
+Manual GitHub upload has 100 file limit.
+Client folder has 118+ files.
+
+========================================
+SOLUTION 1: GitHub Desktop (EASIEST!)
+========================================
+
+1. Download: https://desktop.github.com/
+2. Install and login
+3. File → Add Local Repository
+4. Select "client" folder
+5. Click "Publish repository"
+6. DONE! ✅
+
+Time: 5 minutes
+Difficulty: Very Easy
+
+========================================
+SOLUTION 2: Git Command with Auth
+========================================
+
+Install GitHub CLI:
+```
+winget install GitHub.cli
+```
+
+Then:
+```
+gh auth login
+cd client
+git push -u origin main
+```
+
+Time: 3 minutes
+Difficulty: Easy
+
+========================================
+SOLUTION 3: Upload in Batches
+========================================
+
+Upload folders one by one:
+
+Batch 1: Upload "src" folder only
+Batch 2: Upload "public" folder only  
+Batch 3: Upload config files
+
+Time: 15 minutes
+Difficulty: Tedious
+
+========================================
+RECOMMENDED: Use GitHub Desktop!
+========================================
+
+It's the easiest and fastest way.
+No file limits, no authentication issues.
+
+Download: https://desktop.github.com/
+
+========================================

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test - Pickup Locations</title>
+</head>
+<body>
+    <h1>Testing Pickup Location APIs</h1>
+    <button onclick="testVendorAPI()">Test Vendor API</button>
+    <button onclick="testPrintingAPI()">Test Printing API</button>
+    <button onclick="testBothAPIs()">Test Both APIs</button>
+    <pre id="output"></pre>
+
+    <script>
+        const output = document.getElementById('output');
+        
+        async function testVendorAPI() {
+            output.textContent = 'Testing Vendor API...\n';
+            try {
+                const url = 'https://vendor-202671058278.asia-south1.run.app/api/vendor/stores/nearby?limit=50';
+                const response = await fetch(url);
+                const data = await response.json();
+                output.textContent += '\n=== VENDOR API RESPONSE ===\n';
+                output.textContent += JSON.stringify(data, null, 2);
+                output.textContent += '\n\n=== DATA STRUCTURE ===\n';
+                output.textContent += `Type: ${typeof data}\n`;
+                output.textContent += `Has success: ${data.hasOwnProperty('success')}\n`;
+                output.textContent += `Has data: ${data.hasOwnProperty('data')}\n`;
+                if (data.data) {
+                    output.textContent += `data type: ${typeof data.data}\n`;
+                    output.textContent += `data.stores exists: ${data.data.hasOwnProperty('stores')}\n`;
+                    if (data.data.stores) {
+                        output.textContent += `stores is array: ${Array.isArray(data.data.stores)}\n`;
+                        output.textContent += `stores length: ${data.data.stores.length}\n`;
+                        if (data.data.stores.length > 0) {
+                            output.textContent += '\n=== FIRST STORE ===\n';
+                            output.textContent += JSON.stringify(data.data.stores[0], null, 2);
+                        }
+                    }
+                }
+            } catch (error) {
+                output.textContent += '\nERROR: ' + error.message;
+            }
+        }
+
+        async function testPrintingAPI() {
+            output.textContent = 'Testing Printing API...\n';
+            try {
+                const url = 'https://gateway-202671058278.asia-south1.run.app/api/products/printing/pickup-locations?limit=50';
+                const response = await fetch(url);
+                const data = await response.json();
+                output.textContent += '\n=== PRINTING API RESPONSE ===\n';
+                output.textContent += JSON.stringify(data, null, 2);
+                output.textContent += '\n\n=== DATA STRUCTURE ===\n';
+                output.textContent += `Type: ${typeof data}\n`;
+                output.textContent += `Has success: ${data.hasOwnProperty('success')}\n`;
+                output.textContent += `Has data: ${data.hasOwnProperty('data')}\n`;
+                if (data.data) {
+                    output.textContent += `data type: ${typeof data.data}\n`;
+                    output.textContent += `data is array: ${Array.isArray(data.data)}\n`;
+                    if (Array.isArray(data.data)) {
+                        output.textContent += `data length: ${data.data.length}\n`;
+                        if (data.data.length > 0) {
+                            output.textContent += '\n=== FIRST LOCATION ===\n';
+                            output.textContent += JSON.stringify(data.data[0], null, 2);
+                        }
+                    }
+                }
+            } catch (error) {
+                output.textContent += '\nERROR: ' + error.message;
+            }
+        }
+
+        async function testBothAPIs() {
+            output.textContent = 'Testing Both APIs...\n\n';
+            await testVendorAPI();
+            output.textContent += '\n\n========================================\n\n';
+            await testPrintingAPI();
+        }
+    </script>
+</body>
+</html>

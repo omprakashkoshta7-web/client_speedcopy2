@@ -1,0 +1,21 @@
+require('dotenv').config();
+const { requireEnv, requireSecret } = require('../../../../../../shared/utils/env');
+
+module.exports = {
+    port: Number(process.env.PORT || 8080),
+    mongoUri: requireEnv('MONGO_URI'),
+    internalServiceToken: requireSecret('INTERNAL_SERVICE_TOKEN', 'speedcopy-internal-dev-token'),
+    smtp: {
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT) || 587,
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+        from: process.env.EMAIL_FROM || 'noreply@speedcopy.com',
+    },
+    twilio: {
+        accountSid: process.env.TWILIO_ACCOUNT_SID,
+        authToken: process.env.TWILIO_AUTH_TOKEN,
+        phone: process.env.TWILIO_PHONE,
+    },
+    publicBaseUrl: process.env.NOTIFICATION_SERVICE_PUBLIC_URL || process.env.SERVICE_PUBLIC_URL,
+};

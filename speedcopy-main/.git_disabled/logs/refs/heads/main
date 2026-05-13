@@ -1,0 +1,13 @@
+0000000000000000000000000000000000000000 f2cfa0aa4953a1682645315153db86622c52d726 Sneha koshta <snehakoshta1@gmail.com> 1778245030 +0530	commit (initial): Initial commit: SpeedCopy client application
+f2cfa0aa4953a1682645315153db86622c52d726 f2cfa0aa4953a1682645315153db86622c52d726 Sneha koshta <snehakoshta1@gmail.com> 1778245067 +0530	Branch: renamed refs/heads/master to refs/heads/main
+f2cfa0aa4953a1682645315153db86622c52d726 db2706bf4101a003c51aba8ede1adeefe6edad14 Sneha koshta <snehakoshta1@gmail.com> 1778245845 +0530	commit: Fix all TypeScript build errors
+db2706bf4101a003c51aba8ede1adeefe6edad14 1e381f8958a79ce0eab01b50c351a11b6cca3839 Sneha koshta <snehakoshta1@gmail.com> 1778319259 +0530	commit: Update customization editor and product image handling
+1e381f8958a79ce0eab01b50c351a11b6cca3839 a84c2d564a71fb81651af107d5b57b2945c29962 Sneha koshta <snehakoshta1@gmail.com> 1778320330 +0530	commit: Fix deployment build errors
+a84c2d564a71fb81651af107d5b57b2945c29962 eacaf7a8da6a934660dc36ba2f39aa22a171321c Sneha koshta <snehakoshta1@gmail.com> 1778320449 +0530	rebase (finish): refs/heads/main onto fe14ed4de471951e200c76be550bc6a3d0f5c2b1
+eacaf7a8da6a934660dc36ba2f39aa22a171321c 926ab0184f1a936ac26b0882f7653f137fc67c77 Sneha koshta <snehakoshta1@gmail.com> 1778320758 +0530	commit: update
+926ab0184f1a936ac26b0882f7653f137fc67c77 03ed53d23c743380e2c725f1c77865455cb8188c Sneha koshta <snehakoshta1@gmail.com> 1778400368 +0530	commit: update2
+03ed53d23c743380e2c725f1c77865455cb8188c 824663499ad18b8452f49c6fc389f86c64e43f5e Sneha koshta <snehakoshta1@gmail.com> 1778404012 +0530	commit: updates files
+824663499ad18b8452f49c6fc389f86c64e43f5e 43017220177c5befb86ec8fb22c29cc3de943b7d Sneha koshta <snehakoshta1@gmail.com> 1778417422 +0530	commit: update45
+43017220177c5befb86ec8fb22c29cc3de943b7d f18408722b8340cc6171e2ad445c13f04c7571fd Sneha koshta <snehakoshta1@gmail.com> 1778466541 +0530	commit: updates files
+f18408722b8340cc6171e2ad445c13f04c7571fd f167a682c35b728a99278bf1fad088cf571d4f68 Sneha koshta <snehakoshta1@gmail.com> 1778467367 +0530	commit: Revert yesterday UI changes
+f167a682c35b728a99278bf1fad088cf571d4f68 58e29a233ea4923ab96cde4245910f4a72c38801 Sneha koshta <snehakoshta1@gmail.com> 1778472049 +0530	commit: update files

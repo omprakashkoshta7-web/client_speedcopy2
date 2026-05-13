@@ -1,0 +1,201 @@
+{
+  "info": {
+    "name": "Vendor Finance APIs",
+    "description": "Complete collection of vendor finance endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://gateway-202671058278.asia-south1.run.app/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "YOUR_AUTH_TOKEN_HERE",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Wallet APIs",
+      "item": [
+        {
+          "name": "Get Wallet Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vendor/finance/wallet/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["vendor", "finance", "wallet", "summary"]
+            }
+          }
+        },
+        {
+          "name": "Get Store-wise Earnings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vendor/finance/wallet/store-wise",
+              "host": ["{{baseUrl}}"],
+              "path": ["vendor", "finance", "wallet", "store-wise"]
+            }
+          }
+        },
+        {
+          "name": "Get Wallet Deductions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vendor/finance/wallet/deductions",
+              "host": ["{{baseUrl}}"],
+              "path": ["vendor", "finance", "wallet", "deductions"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Closure APIs",
+      "item": [
+        {
+          "name": "Get Daily Closure",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vendor/finance/closure/daily?date=2024-01-15",
+              "host": ["{{baseUrl}}"],
+              "path": ["vendor", "finance", "closure", "daily"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-01-15",
+                  "description": "Optional: YYYY-MM-DD format"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Weekly Closure",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vendor/finance/closure/weekly?date=2024-01-15",
+              "host": ["{{baseUrl}}"],
+              "path": ["vendor", "finance", "closure", "weekly"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-01-15",
+                  "description": "Optional: Any date in the week"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Monthly Closure",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vendor/finance/closure/monthly?date=2024-01-15",
+              "host": ["{{baseUrl}}"],
+              "path": ["vendor", "finance", "closure", "monthly"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-01-15",
+                  "description": "Optional: Any date in the month"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payout APIs",
+      "item": [
+        {
+          "name": "Get Payout Schedule",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vendor/finance/payouts/schedule",
+              "host": ["{{baseUrl}}"],
+              "path": ["vendor", "finance", "payouts", "schedule"]
+            }
+          }
+        },
+        {
+          "name": "Get Payout History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vendor/finance/payouts/history",
+              "host": ["{{baseUrl}}"],
+              "path": ["vendor", "finance", "payouts", "history"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

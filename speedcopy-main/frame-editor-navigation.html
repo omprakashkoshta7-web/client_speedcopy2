@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frame Editor Navigation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+        }
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+            margin: 0;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .option-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #ff6a3d;
+        }
+        .option-card h3 {
+            color: #333;
+            margin: 0 0 15px 0;
+            font-size: 1.3em;
+        }
+        .option-card p {
+            color: #666;
+            margin: 0 0 20px 0;
+            line-height: 1.5;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        .btn-warning {
+            background: #ff6a3d;
+            color: white;
+        }
+        .btn-warning:hover {
+            background: #e55a2b;
+        }
+        .features {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        .features h3 {
+            color: #333;
+            margin: 0 0 15px 0;
+            text-align: center;
+        }
+        .features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .features li {
+            color: #666;
+            padding: 5px 0;
+        }
+        .features li:before {
+            content: "✅ ";
+            margin-right: 8px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .status-working {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-issues {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status-testing {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖼️ Frame Editor</h1>
+            <p>Choose your preferred version to start editing frames</p>
+        </div>
+
+        <div class="options">
+            <div class="option-card">
+                <h3>📱 HTML Demo <span class="status status-working">Working</span></h3>
+                <p>Standalone HTML version with Fabric.js. Works immediately without any dependencies or installation.</p>
+                <a href="frame-editor-demo.html" class="btn btn-warning">Open HTML Demo</a>
+            </div>
+
+            <div class="option-card">
+                <h3>⚛️ React Version <span class="status status-issues">Dependency Issues</span></h3>
+                <p>Full React component with TypeScript. Currently has dependency conflicts that need to be resolved.</p>
+                <a href="/simple-frame-editor?productId=60eabb572abd6042bd053a" class="btn btn-primary">Try React Version</a>
+            </div>
+
+            <div class="option-card">
+                <h3>🧪 Test Page <span class="status status-testing">For Testing</span></h3>
+                <p>Compare both editors side by side and test with different product IDs.</p>
+                <a href="/frame-editor-test" class="btn btn-success">Open Test Page</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <h3>✨ Features Available</h3>
+            <ul>
+                <li>Proper frame loading from product images</li>
+                <li>Canvas scaling to match frame dimensions</li>
+                <li>Image upload and positioning</li>
+                <li>Frame switching functionality</li>
+                <li>Zoom in/out controls</li>
+                <li>Download design as PNG</li>
+                <li>Add to cart integration</li>
+                <li>Drag & drop file upload</li>
+                <li>Delete selected objects</li>
+                <li>Responsive design</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <p style="color: #666; margin: 0;">
+                <strong>Recommendation:</strong> Use the HTML Demo for immediate testing. 
+                The React version will work once dependency issues are resolved.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.option-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (e.target.tagName !== 'A') {
+                        const link = card.querySelector('a');
+                        if (link) {
+                            link.click();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
