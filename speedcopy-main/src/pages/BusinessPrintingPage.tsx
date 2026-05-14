@@ -10,7 +10,7 @@ import {
   getDiscountBadgeClasses 
 } from '../utils/discount.utils';
 import { normalizeImageUrl } from '../utils/image.utils';
-import businessPrintingService, { BusinessPrintType } from '../services/business-printing.service';
+import businessPrintingService, { type BusinessPrintType } from '../services/business-printing.service';
 
 interface CategoryType extends BusinessPrintType {
   image?: string;
@@ -119,7 +119,6 @@ const BusinessPrintingPage: React.FC = () => {
 
   const getStartingPrice = (type: CategoryType) => {
     if (type.base_price) return `₹${type.base_price}`;
-    if (type.starting_price) return `₹${type.starting_price}`;
     return null;
   };
 
@@ -248,12 +247,6 @@ const BusinessPrintingPage: React.FC = () => {
                     {discountInfo.badgeText && (
                       <div className={getDiscountBadgeClasses(discountInfo.badgeColor)}>
                         {discountInfo.badgeText}
-                      </div>
-                    )}
-                    
-                    {type.is_deal_of_day && (
-                      <div className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-2 py-1 text-xs font-bold rounded-md shadow-lg animate-pulse">
-                        DEAL
                       </div>
                     )}
                     
